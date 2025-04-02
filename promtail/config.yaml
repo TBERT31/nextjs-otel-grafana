@@ -1,0 +1,44 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+- url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+- job_name: system
+  static_configs:
+  - targets:
+    - localhost
+    labels:
+      job: go-app-logs
+      __path__: /var/log/go-app/*.log
+
+- job_name: file_scrape
+  static_configs:
+  - targets:
+    - localhost
+    labels:
+      job: go-app
+      service: go-app
+      __path__: /logs/*.log
+  pipeline_stages:
+  - json:
+      expressions:
+        level: level
+        msg: msg
+        time: time
+        trace_id: trace_id
+        span_id: span_id
+        service: service
+  - labels:
+      level:
+      trace_id:
+      span_id:
+      service:
+  - timestamp:
+      source: time
+      format: RFC3339

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App with OpenTelemetry</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .completed { text-decoration: line-through; color: #888; }
+        form { margin: 20px 0; }
+        input[type="text"] { padding: 8px; width: 80%; }
+        button { padding: 8px 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #4CAF50; }
+        nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Todo App with OpenTelemetry</h1>
+    <nav>
+        <a href="/" class="active">Todo App</a>
+        <a href="/traces">Trace Viewer</a>
+    </nav>
+    <div id="todos"></div>
+    <form id="add-form">
+        <input type="text" id="new-todo" placeholder="Add new todo..." required>
+        <button type="submit">Add</button>
+    </form>
+    <script>
+        // Fetch todos
+        async function fetchTodos() {
+            const response = await fetch('/api/todos');
+            const todos = await response.json();
+            const todoList = document.getElementById('todos');
+            todoList.innerHTML = '<ul>' + todos.map(todo =>
+                `<li class="${todo.completed ? 'completed' : ''}">
+                    <input type="checkbox" data-id="${todo.id}" ${todo.completed ? 'checked' : ''}>
+                    ${todo.title}
+                    <button data-id="${todo.id}" class="delete">Delete</button>
+                </li>`
+            ).join('') + '</ul>';
+
+            // Add event listeners
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', async (e) => {
+                    const id = e.target.dataset.id;
+                    const completed = e.target.checked;
+                    await fetch('/api/todos/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ completed })
+                    });
+                    fetchTodos();
+                });
+            });
+
+            document.querySelectorAll('.delete').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    await fetch('/api/todos/' + id, { method: 'DELETE' });
+                    fetchTodos();
+                });
+            });
+        }
+
+        // Add new todo
+        document.getElementById('add-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('new-todo');
+            const title = input.value.trim();
+            if (title) {
+                await fetch('/api/todos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+                input.value = '';
+                fetchTodos();
+            }
+        });
+
+        // Initial load
+        fetchTodos();
+    </script>
+</body>
+</html>

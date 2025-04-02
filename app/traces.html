@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trace Viewer - OpenTelemetry Go App</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1, h2 { color: #333; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #4CAF50; }
+        nav a:hover { text-decoration: underline; }
+        .search-form { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        .search-form input { padding: 8px; flex-grow: 1; }
+        .search-form select { padding: 8px; }
+        .search-form button { padding: 8px 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+
+        .trace-list { margin: 20px 0; }
+        .trace-list table { width: 100%; border-collapse: collapse; }
+        .trace-list th, .trace-list td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .trace-list th { background-color: #f2f2f2; }
+        .trace-list tr:hover { background-color: #f5f5f5; }
+
+        .trace-details { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 4px; }
+        .trace-id { color: #4CAF50; font-weight: bold; }
+        .span { margin: 10px 0; padding: 10px; background-color: #f9f9f9; border-radius: 4px; }
+        .span-header { display: flex; justify-content: space-between; }
+        .span-name { font-weight: bold; }
+        .span-duration { color: #888; }
+        .span-attributes { margin-top: 5px; }
+        .attribute { display: inline-block; padding: 2px 6px; margin: 2px; background-color: #eee; border-radius: 4px; font-size: 0.8em; }
+
+        /* Indentation for span hierarchy */
+        .span-level-0 { margin-left: 0; }
+        .span-level-1 { margin-left: 20px; }
+        .span-level-2 { margin-left: 40px; }
+        .span-level-3 { margin-left: 60px; }
+        .span-level-4 { margin-left: 80px; }
+        .span-level-5 { margin-left: 100px; }
+
+        /* Waterfall view styling */
+        .waterfall { width: 100%; position: relative; height: 20px; background-color: #f0f0f0; }
+        .waterfall-bar { position: absolute; height: 100%; background-color: #4CAF50; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <h1>Trace Viewer</h1>
+    <nav>
+        <a href="/">Todo App</a>
+        <a href="/traces" class="active">Trace Viewer</a>
+    </nav>
+
+    <div>
+        <form id="search-form" class="search-form">
+            <select id="search-type">
+                <option value="trace">Trace ID</option>
+                <option value="service" selected>Service Name</option>
+                <option value="operation">Operation Name</option>
+            </select>
+            <input type="text" id="search-query" placeholder="Enter search query...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="trace-list">
+        <h2>Recent Traces</h2>
+        <table id="traces-table">
+            <thead>
+                <tr>
+                    <th>Trace ID</th>
+                    <th>Name</th>
+                    <th>Service</th>
+                    <th>Duration</th>
+                    <th>Start Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="traces-body">
+                <!-- Traces will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="trace-details" class="trace-details" style="display: none;">
+        <h2>Trace Details</h2>
+        <div id="trace-content">
+            <!-- Trace details will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Initial load of traces
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRecentTraces();
+
+            // Set up search form
+            document.getElementById('search-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const searchType = document.getElementById('search-type').value;
+                const searchQuery = document.getElementById('search-query').value;
+                searchTraces(searchType, searchQuery);
+            });
+        });
+
+        async function fetchRecentTraces() {
+            try {
+                const response = await fetch('/api/traces');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch traces');
+                }
+
+                const traces = await response.json();
+                renderTraceList(traces);
+            } catch (error) {
+                console.error('Error fetching traces:', error);
+            }
+        }
+
+        async function searchTraces(type, query) {
+            try {
+                const response = await fetch(`/api/traces/search?type=${type}&query=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to search traces');
+                }
+
+                const traces = await response.json();
+                renderTraceList(traces);
+            } catch (error) {
+                console.error('Error searching traces:', error);
+            }
+        }
+
+        function renderTraceList(traces) {
+            const tbody = document.getElementById('traces-body');
+            tbody.innerHTML = '';
+
+            traces.forEach(trace => {
+                const row = document.createElement('tr');
+
+                // Format duration to be more readable
+                const durationMs = formatDuration(trace.durationNanos);
+                const startTime = new Date(trace.startTimeUnixNano / 1000000).toLocaleString();
+
+                row.innerHTML = `
+                    <td>${trace.traceID}</td>
+                    <td>${trace.name}</td>
+                    <td>${trace.serviceName}</td>
+                    <td>${durationMs}</td>
+                    <td>${startTime}</td>
+                    <td><button onclick="viewTraceDetails('${trace.traceID}')">View</button></td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        async function viewTraceDetails(traceID) {
+            try {
+                const response = await fetch(`/api/traces/${traceID}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch trace details');
+                }
+
+                const trace = await response.json();
+                renderTraceDetails(trace);
+            } catch (error) {
+                console.error('Error fetching trace details:', error);
+            }
+        }
+
+        function renderTraceDetails(trace) {
+            const traceContent = document.getElementById('trace-content');
+
+            // Calculate total duration for waterfall view
+            const startTime = Math.min(...trace.spans.map(span => span.startTimeUnixNano));
+            const endTime = Math.max(...trace.spans.map(span => span.startTimeUnixNano + span.durationNanos));
+            const totalDuration = endTime - startTime;
+
+            let html = `<div class="trace-id">Trace ID: ${trace.traceID}</div>`;
+
+            // Create a map for parent-child relationships
+            const spanMap = {};
+            trace.spans.forEach(span => {
+                spanMap[span.spanID] = span;
+            });
+
+            // Sort spans to show hierarchy
+            const sortedSpans = [...trace.spans];
+            sortedSpans.sort((a, b) => a.startTimeUnixNano - b.startTimeUnixNano);
+
+            // Render spans
+            sortedSpans.forEach(span => {
+                const level = getSpanLevel(span, spanMap);
+                const offsetPercent = ((span.startTimeUnixNano - startTime) / totalDuration) * 100;
+                const widthPercent = (span.durationNanos / totalDuration) * 100;
+
+                html += `
+                    <div class="span span-level-${Math.min(level, 5)}">
+                        <div class="span-header">
+                            <div class="span-name">${span.name}</div>
+                            <div class="span-duration">${formatDuration(span.durationNanos)}</div>
+                        </div>
+                        <div class="waterfall">
+                            <div class="waterfall-bar" style="left: ${offsetPercent}%; width: ${widthPercent}%;"></div>
+                        </div>
+                        <div class="span-attributes">
+                            <div class="attribute">ID: ${span.spanID}</div>
+                            ${span.parentSpanID ? `<div class="attribute">Parent: ${span.parentSpanID}</div>` : ''}
+                            ${Object.entries(span.attributes || {}).map(([key, value]) =>
+                                `<div class="attribute">${key}: ${value}</div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            traceContent.innerHTML = html;
+            document.getElementById('trace-details').style.display = 'block';
+        }
+
+        function getSpanLevel(span, spanMap) {
+            let level = 0;
+            let currentSpan = span;
+
+            while (currentSpan.parentSpanID && spanMap[currentSpan.parentSpanID]) {
+                level++;
+                currentSpan = spanMap[currentSpan.parentSpanID];
+            }
+
+            return level;
+        }
+
+        function formatDuration(nanos) {
+            const ms = nanos / 1000000;
+            if (ms >= 1000) {
+                return `${(ms / 1000).toFixed(2)}s`;
+            }
+            return `${ms.toFixed(2)}ms`;
+        }
+    </script>
+</body>
+</html>
