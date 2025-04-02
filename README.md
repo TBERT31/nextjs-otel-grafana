@@ -33,10 +33,10 @@ This project demonstrates distributed tracing using OpenTelemetry, Grafana Tempo
 ## Getting Started
 
 1. Clone this repository
-2. Run the docker-compose file:
+2. Run the docker compose file:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 3. Access the services:
@@ -94,7 +94,7 @@ For more advanced trace analysis, you can also view traces in Grafana:
 
 ## Structure
 
-- `docker-compose.yml`: Main configuration file for all services
+- `docker compose.yml`: Main configuration file for all services
 - `app/`: Contains Go application with OpenTelemetry instrumentation
 - `tempo/`: Contains Tempo configuration
 - `grafana/`: Contains Grafana provisioning files
