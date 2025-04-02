@@ -14,12 +14,12 @@ This project demonstrates distributed tracing using OpenTelemetry, Grafana Tempo
 ## Architecture
 
 ```
-┌─────────┐    OTLP     ┌─────────────────┐    OTLP     ┌────────┐    Query    ┌─────────┐
+┌─────────┐    OTLP     ┌─────────────────┐    OTLP     ┌────────┐    Query   ┌─────────┐
 │ Go App  ├────────────►│ OTEL Collector  ├────────────►│ Tempo  │◄───────────┤         │
-└────┬────┘             └───────┬─────────┘             └────────┘             │         │
-     │                          │                                              │ Grafana │
-     │ SQL                      │ Logs                  ┌────────┐    Query    │         │
-     ▼                          ▼                       │        │◄───────────┤         │
+└────┬────┘             └───────┬─────────┘             └────────┘            │         │
+     │                          │                                             │ Grafana │
+     │ SQL                      │ Logs                 ┌────────┐    Query    │         │
+     ▼                          ▼                      │        │◄────────────┤         │
 ┌─────────┐              ┌─────────────┐               │  Loki  │             └─────────┘
 │ Postgres│              │  Promtail   ├──────────────►│        │
 └─────────┘              └─────────────┘               └────────┘
