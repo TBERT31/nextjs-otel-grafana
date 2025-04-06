@@ -1,0 +1,43 @@
+{"level":"info","message":"Server listening on port 8080","timestamp":"2025-04-04T15:41:45.383Z","service":"node-app"}
+{"level":"info","message":"OpenTelemetry service name: node-app","timestamp":"2025-04-04T15:41:45.388Z","service":"node-app"}
+{"level":"info","message":"OpenTelemetry endpoint: http://otel-collector:4317","timestamp":"2025-04-04T15:41:45.389Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-04-04T15:42:08.956Z","service":"node-app"}
+{"level":"info","message":"Retrieved 12 todos","timestamp":"2025-04-04T15:42:09.151Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-04-04T15:42:12.428Z","service":"node-app"}
+{"level":"info","message":"Retrieved 12 todos","timestamp":"2025-04-04T15:42:12.447Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 16","timestamp":"2025-04-04T15:42:14.772Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 16","timestamp":"2025-04-04T15:42:14.803Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 17","timestamp":"2025-04-04T15:42:15.240Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 17","timestamp":"2025-04-04T15:42:15.248Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 18","timestamp":"2025-04-04T15:42:15.457Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 18","timestamp":"2025-04-04T15:42:15.462Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 19","timestamp":"2025-04-04T15:42:15.642Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 19","timestamp":"2025-04-04T15:42:15.654Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 20","timestamp":"2025-04-04T15:42:15.842Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 20","timestamp":"2025-04-04T15:42:15.860Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 21","timestamp":"2025-04-04T15:42:16.093Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 21","timestamp":"2025-04-04T15:42:16.100Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 22","timestamp":"2025-04-04T15:42:16.296Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 22","timestamp":"2025-04-04T15:42:16.302Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 23","timestamp":"2025-04-04T15:42:16.487Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 23","timestamp":"2025-04-04T15:42:16.496Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 24","timestamp":"2025-04-04T15:42:16.659Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 24","timestamp":"2025-04-04T15:42:16.666Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 26","timestamp":"2025-04-04T15:42:16.841Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 26","timestamp":"2025-04-04T15:42:16.847Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 27","timestamp":"2025-04-04T15:42:17.004Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 27","timestamp":"2025-04-04T15:42:17.011Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 28","timestamp":"2025-04-04T15:42:17.210Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 28","timestamp":"2025-04-04T15:42:17.218Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-04-04T15:43:16.368Z","service":"node-app"}
+{"level":"info","message":"Retrieved 0 todos","timestamp":"2025-04-04T15:43:16.430Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-04-04T16:03:21.581Z","service":"node-app"}
+{"level":"info","message":"Retrieved 0 todos","timestamp":"2025-04-04T16:03:21.801Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-04-04T16:03:23.367Z","service":"node-app"}
+{"level":"info","message":"Retrieved 0 todos","timestamp":"2025-04-04T16:03:23.376Z","service":"node-app"}
+{"level":"info","message":"Creating new todo: hello","timestamp":"2025-04-04T16:03:27.862Z","service":"node-app"}
+{"level":"info","message":"Created todo with ID: 30","timestamp":"2025-04-04T16:03:27.888Z","service":"node-app"}
+{"level":"info","message":"Creating new todo: test","timestamp":"2025-04-04T16:03:31.360Z","service":"node-app"}
+{"level":"info","message":"Created todo with ID: 31","timestamp":"2025-04-04T16:03:31.380Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-04-04T16:03:32.166Z","service":"node-app"}
+{"level":"info","message":"Retrieved 2 todos","timestamp":"2025-04-04T16:03:32.168Z","service":"node-app"}

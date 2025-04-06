@@ -1,30 +1,21 @@
-FROM golang:1.21-alpine AS builder
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod go.sum ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Download dependencies
-RUN go mod download
+# Install dependencies
+RUN npm install
 
-# Copy source code
-COPY *.go *.html ./
+# Copy application files
+COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o /go-app
+# Create directory for logs
+RUN mkdir -p /logs && chmod 777 /logs
 
-# Final stage
-FROM alpine:3.18
+# Expose port
+EXPOSE 8080
 
-WORKDIR /
-
-# Copy the binary from builder
-COPY --from=builder /go-app /go-app
-
-# Copy the HTML files
-COPY --from=builder /app/index.html /index.html
-COPY --from=builder /app/traces.html /traces.html
-
-# Run the application
-CMD ["/go-app"]
+# Start the application
+CMD ["node", "index.js"]
