@@ -103,6 +103,7 @@ For trace analysis, you can view traces in Grafana:
 
 - `docker compose.yml`: Main configuration file for all services
 - `app/`: Contains Node.js application with OpenTelemetry instrumentation
+  - `app/logs/`: Contains application logs
 - `tempo/`: Contains Tempo configuration
 - `grafana/`: Contains Grafana provisioning files
 - `otel-collector/`: Contains OpenTelemetry Collector configuration
