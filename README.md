@@ -66,7 +66,7 @@ startSdk()
 2. After making changes to the Node.js application code, rebuild the container:
 
 ```bash
-docker-compose up -d --build node-app
+docker compose up -d --build node-app
 ```
 
 ## Using the Todo App
