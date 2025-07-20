@@ -41,3 +41,17 @@
 {"level":"info","message":"Created todo with ID: 31","timestamp":"2025-04-04T16:03:31.380Z","service":"node-app"}
 {"level":"info","message":"Getting all todos","timestamp":"2025-04-04T16:03:32.166Z","service":"node-app"}
 {"level":"info","message":"Retrieved 2 todos","timestamp":"2025-04-04T16:03:32.168Z","service":"node-app"}
+{"level":"info","message":"Server listening on port 8080","timestamp":"2025-07-20T07:39:49.665Z","service":"node-app"}
+{"level":"info","message":"OpenTelemetry service name: node-app","timestamp":"2025-07-20T07:39:49.669Z","service":"node-app"}
+{"level":"info","message":"OpenTelemetry endpoint: http://otel-collector:4317","timestamp":"2025-07-20T07:39:49.670Z","service":"node-app"}
+{"level":"info","message":"Server listening on port 8080","timestamp":"2025-07-20T07:40:32.764Z","service":"node-app"}
+{"level":"info","message":"OpenTelemetry service name: node-app","timestamp":"2025-07-20T07:40:32.771Z","service":"node-app"}
+{"level":"info","message":"OpenTelemetry endpoint: http://otel-collector:4317","timestamp":"2025-07-20T07:40:32.775Z","service":"node-app"}
+{"level":"info","message":"Getting all todos","timestamp":"2025-07-20T07:40:35.842Z","service":"node-app"}
+{"level":"info","message":"Retrieved 4 todos","timestamp":"2025-07-20T07:40:35.892Z","service":"node-app"}
+{"level":"info","message":"Creating new todo: test","timestamp":"2025-07-20T07:41:41.871Z","service":"node-app"}
+{"level":"info","message":"Created todo with ID: 5","timestamp":"2025-07-20T07:41:41.893Z","service":"node-app"}
+{"level":"info","message":"Creating new todo: test","timestamp":"2025-07-20T07:41:44.442Z","service":"node-app"}
+{"level":"info","message":"Created todo with ID: 6","timestamp":"2025-07-20T07:41:44.451Z","service":"node-app"}
+{"level":"info","message":"Deleting todo ID: 5","timestamp":"2025-07-20T07:42:22.098Z","service":"node-app"}
+{"level":"info","message":"Deleted todo ID: 5","timestamp":"2025-07-20T07:42:22.126Z","service":"node-app"}
