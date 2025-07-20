@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+/app/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+/app/logs/
+
+# Docker volumes
+postgres-data/
+
+# OS files
+.DS_Store
+Thumbs.db
