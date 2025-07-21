@@ -1,103 +1,421 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+  created_at: string;
+}
+
+export default function TodoApp() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [newTodo, setNewTodo] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Charger les todos au montage du composant
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  // Fonction pour récupérer tous les todos
+  const fetchTodos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/todos');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const todosData = await response.json();
+      setTodos(todosData);
+    } catch (err) {
+      console.error('Error fetching todos:', err);
+      setError('Failed to load todos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fonction pour ajouter un nouveau todo
+  const addTodo = async () => {
+    if (!newTodo.trim()) return;
+
+    try {
+      setError(null);
+      
+      const response = await fetch('/api/todos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: newTodo.trim() }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const newTodoData = await response.json();
+      setTodos([...todos, newTodoData]);
+      setNewTodo('');
+    } catch (err) {
+      console.error('Error adding todo:', err);
+      setError('Failed to add todo');
+    }
+  };
+
+  // Fonction pour basculer le statut d'un todo
+  const toggleTodo = async (id: number, completed: boolean) => {
+    try {
+      setError(null);
+      
+      const response = await fetch(`/api/todos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedTodo = await response.json();
+      setTodos(todos.map(todo => 
+        todo.id === id ? updatedTodo : todo
+      ));
+    } catch (err) {
+      console.error('Error updating todo:', err);
+      setError('Failed to update todo');
+    }
+  };
+
+  // Fonction pour supprimer un todo
+  const deleteTodo = async (id: number) => {
+    try {
+      setError(null);
+      
+      const response = await fetch(`/api/todos/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setTodos(todos.filter(todo => todo.id !== id));
+    } catch (err) {
+      console.error('Error deleting todo:', err);
+      setError('Failed to delete todo');
+    }
+  };
+
+  // Gestion de la soumission du formulaire
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addTodo();
+  };
+
+  if (loading) {
+    return (
+      <div className="container">
+        <h1>OpenTelemetry Next.js Todo App</h1>
+        <div className="loading">Loading todos...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <div className="container">
+        <h1>OpenTelemetry Next.js Todo App</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
+        {error && (
+          <div className="error-message">
+            {error}
+            <button onClick={() => setError(null)}>×</button>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="add-todo">
+          <input
+            type="text"
+            value={newTodo}
+            onChange={(e) => setNewTodo(e.target.value)}
+            placeholder="Add a new todo..."
+            className="todo-input"
+          />
+          <button type="submit" className="add-button">
+            Add
+          </button>
+        </form>
+
+        <ul className="todo-list">
+          {todos.map((todo) => (
+            <li key={todo.id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={(e) => toggleTodo(todo.id, e.target.checked)}
+              />
+              <span className="todo-text">{todo.title}</span>
+              <button
+                onClick={() => deleteTodo(todo.id)}
+                className="delete-btn"
+                title="Delete todo"
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        {todos.length === 0 && !loading && (
+          <div className="empty-state">
+            No todos yet. Add your first todo above!
+          </div>
+        )}
+
+        <div className="info">
+          <p>This Next.js application is instrumented with OpenTelemetry.</p>
+          <p>All traces, logs, and metrics are automatically captured and sent to Grafana via the OTEL Collector.</p>
+          <p>Total todos: {todos.length} | Completed: {todos.filter(t => t.completed).length}</p>
+        </div>
+
+        <div className="links">
+          <a href="/api/health" target="_blank" rel="noopener noreferrer">
+            Health Check
           </a>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+
+      <style jsx global>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          line-height: 1.6;
+        }
+
+        .container {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        h1 {
+          color: #2c3e50;
+          text-align: center;
+          margin-bottom: 30px;
+          font-size: 2.5em;
+          font-weight: 300;
+        }
+
+        .loading {
+          text-align: center;
+          padding: 40px;
+          font-size: 1.2em;
+          color: #666;
+        }
+
+        .error-message {
+          background-color: #fee;
+          border: 1px solid #fcc;
+          color: #c33;
+          padding: 12px;
+          border-radius: 6px;
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .error-message button {
+          background: none;
+          border: none;
+          color: #c33;
+          font-size: 18px;
+          cursor: pointer;
+          padding: 0 5px;
+        }
+
+        .add-todo {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 30px;
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .todo-input {
+          flex: 1;
+          padding: 12px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 6px;
+          font-size: 16px;
+          transition: border-color 0.2s;
+        }
+
+        .todo-input:focus {
+          outline: none;
+          border-color: #3498db;
+        }
+
+        .add-button {
+          padding: 12px 24px;
+          background-color: #3498db;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 500;
+          transition: background-color 0.2s;
+        }
+
+        .add-button:hover {
+          background-color: #2980b9;
+        }
+
+        .todo-list {
+          list-style: none;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          margin-bottom: 30px;
+        }
+
+        .todo-item {
+          display: flex;
+          align-items: center;
+          padding: 16px 20px;
+          border-bottom: 1px solid #f0f0f0;
+          transition: background-color 0.2s;
+        }
+
+        .todo-item:last-child {
+          border-bottom: none;
+        }
+
+        .todo-item:hover {
+          background-color: #fafafa;
+        }
+
+        .todo-item.completed .todo-text {
+          text-decoration: line-through;
+          color: #999;
+        }
+
+        .todo-item input[type="checkbox"] {
+          margin-right: 15px;
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+
+        .todo-text {
+          flex: 1;
+          font-size: 16px;
+          line-height: 1.4;
+        }
+
+        .delete-btn {
+          background: none;
+          border: none;
+          color: #e74c3c;
+          font-size: 20px;
+          cursor: pointer;
+          padding: 5px 10px;
+          border-radius: 4px;
+          transition: background-color 0.2s;
+        }
+
+        .delete-btn:hover {
+          background-color: #fee;
+        }
+
+        .empty-state {
+          text-align: center;
+          padding: 40px;
+          color: #666;
+          font-size: 1.1em;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          margin-bottom: 30px;
+        }
+
+        .info {
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          border-left: 4px solid #3498db;
+          margin-bottom: 20px;
+        }
+
+        .info p {
+          margin-bottom: 8px;
+        }
+
+        .info p:last-child {
+          margin-bottom: 0;
+          font-weight: 500;
+        }
+
+        .links {
+          text-align: center;
+        }
+
+        .links a {
+          display: inline-block;
+          padding: 10px 20px;
+          background-color: #34495e;
+          color: white;
+          text-decoration: none;
+          border-radius: 6px;
+          transition: background-color 0.2s;
+        }
+
+        .links a:hover {
+          background-color: #2c3e50;
+        }
+
+        @media (max-width: 600px) {
+          .container {
+            padding: 15px;
+          }
+
+          h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+          }
+
+          .add-todo {
+            flex-direction: column;
+            gap: 15px;
+          }
+
+          .todo-item {
+            padding: 12px 15px;
+          }
+        }
+      `}</style>
+    </>
   );
 }
