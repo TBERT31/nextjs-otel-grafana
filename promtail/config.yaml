@@ -17,7 +17,7 @@ scrape_configs:
     labels:
       job: node-app
       service: node-app
-      __path__: /logs/node-app.log
+      __path__: /node-app/logs/node-app.log
   pipeline_stages:
   - json:
       expressions:
@@ -40,7 +40,30 @@ scrape_configs:
     labels:
       job: nest-app
       service: nest-app
-      __path__: /logs/nest-app.log
+      __path__: /nest-app/logs/nest-app.log
+  pipeline_stages:
+  - json:
+      expressions:
+        level: level
+        msg: message
+        time: timestamp
+        service: service
+  - labels:
+      level:
+      service:
+  - timestamp:
+      source: time
+      format: RFC3339
+
+# Configuration pour l'application Next.js
+- job_name: next_app_logs
+  static_configs:
+  - targets:
+    - localhost
+    labels:
+      job: next-app
+      service: next-app
+      __path__: /next-app/logs/next-app.log
   pipeline_stages:
   - json:
       expressions:

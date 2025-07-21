@@ -16,14 +16,19 @@ export async function GET() {
       version: process.env.OTEL_SERVICE_VERSION || '1.0.0',
       environment: process.env.NODE_ENV || 'development',
       database: dbHealthy ? 'connected' : 'disconnected',
-      uptime: process.uptime(),
+      aliveSince : process.uptime(),
     };
 
     const statusCode = dbHealthy ? 200 : 503;
 
     logger.info('GET /api/health - Health check completed', { 
       status: healthStatus.status,
-      database: healthStatus.database 
+      timestamp: healthStatus.timestamp,
+      service: healthStatus.service,
+      version: healthStatus.version,
+      environment: healthStatus.environment,
+      database: healthStatus.database,
+      aliveSince: healthStatus.aliveSince,
     });
 
     return NextResponse.json(healthStatus, { 
