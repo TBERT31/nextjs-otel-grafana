@@ -39,9 +39,20 @@ This project demonstrates distributed tracing using OpenTelemetry, Grafana Tempo
 docker compose up -d
 ```
 
+```bash
+cd app 
+npm run dev
+```
+
+```bash
+cd nest-app 
+npm run dev
+```
+
 3. Access the services:
    - Grafana: http://localhost:3000
    - Node.js Application (Todo App): http://localhost:8080
+   - NestJS Application (Todo App): http://localhost:8081
    - OpenTelemetry Collector metrics: http://localhost:8888
 
 ### Troubleshooting

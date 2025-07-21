@@ -3,9 +3,9 @@ node_modules/
 /app/node_modules/
 
 # Environment files
-.env
-.env.local
-.env.production
+# .env
+# .env.local
+# .env.production
 
 # Logs
 *.log
