@@ -49,10 +49,16 @@ cd nest-app
 npm run dev
 ```
 
+```bash
+cd next-app 
+npm run dev
+```
+
 3. Access the services:
    - Grafana: http://localhost:3000
    - Node.js Application (Todo App): http://localhost:8080
    - NestJS Application (Todo App): http://localhost:8081
+   - Next.js Application (Todo App): http://localhost:8082
    - OpenTelemetry Collector metrics: http://localhost:8888
 
 ### Troubleshooting
