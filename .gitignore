@@ -9,7 +9,7 @@ node_modules/
 
 # Logs
 *.log
-/app/logs/
+/logs/
 
 # Docker volumes
 postgres-data/

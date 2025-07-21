@@ -38,7 +38,7 @@ services:
     command: -config.file=/etc/promtail/config.yaml
     volumes:
       - ./promtail:/etc/promtail
-      - ./app/logs:/logs
+      - ./logs:/logs
     depends_on:
       - loki
     networks:
@@ -130,7 +130,7 @@ services:
   #       max-size: "10m"
   #       max-file: "3"
   #   volumes:
-  #     - ./app/logs:/logs
+  #     - ./logs:/logs
   #   restart: unless-stopped
 
 networks:
