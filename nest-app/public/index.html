@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenTelemetry Todo App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .add-todo {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .add-todo input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .add-todo button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .add-todo button:hover {
+            background-color: #2980b9;
+        }
+        .todo-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        .todo-item input[type="checkbox"] {
+            margin-right: 15px;
+        }
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+        .todo-text {
+            flex: 1;
+        }
+        .delete-btn {
+            color: #e74c3c;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 10px;
+        }
+        .delete-btn:hover {
+            color: #c0392b;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .links a {
+            color: #3498db;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>OpenTelemetry Todo App</h1>
+
+    <div class="container">
+        <div class="add-todo">
+            <input type="text" id="new-todo" placeholder="Add a new todo...">
+            <button id="add-button">Add</button>
+        </div>
+
+        <ul class="todo-list" id="todo-list">
+            <!-- Todo items will be added here dynamically -->
+        </ul>
+
+        <div class="info">
+            <p>This application is instrumented with OpenTelemetry Zero-Code Configuration.</p>
+            <p>All traces are automatically captured and sent to the OpenTelemetry Collector.</p>
+        </div>
+
+        <div class="links">
+            <a href="/traces" target="_blank">View Traces</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const todoList = document.getElementById('todo-list');
+            const newTodoInput = document.getElementById('new-todo');
+            const addButton = document.getElementById('add-button');
+
+            // Load todos
+            fetchTodos();
+
+            // Add event listener to add button
+            addButton.addEventListener('click', addTodo);
+
+            // Add event listener to input field
+            newTodoInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addTodo();
+                }
+            });
+
+            // Fetch all todos from the API
+            function fetchTodos() {
+                fetch('/api/todos')
+                    .then(response => response.json())
+                    .then(todos => {
+                        todoList.innerHTML = '';
+                        todos.forEach(todo => {
+                            addTodoToDOM(todo);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching todos:', error));
+            }
+
+            // Add a new todo
+            function addTodo() {
+                const todoText = newTodoInput.value.trim();
+                if (todoText) {
+                    fetch('/api/todos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ title: todoText }),
+                    })
+                    .then(response => response.json())
+                    .then(todo => {
+                        addTodoToDOM(todo);
+                        newTodoInput.value = '';
+                    })
+                    .catch(error => console.error('Error adding todo:', error));
+                }
+            }
+
+            // Add a todo to the DOM
+            function addTodoToDOM(todo) {
+                const li = document.createElement('li');
+                li.className = todo.completed ? 'todo-item completed' : 'todo-item';
+                li.dataset.id = todo.id;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.completed;
+                checkbox.addEventListener('change', function() {
+                    toggleTodoComplete(todo.id, this.checked);
+                    li.className = this.checked ? 'todo-item completed' : 'todo-item';
+                });
+
+                const span = document.createElement('span');
+                span.className = 'todo-text';
+                span.textContent = todo.title;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-btn';
+                deleteButton.textContent = '×';
+                deleteButton.addEventListener('click', function() {
+                    deleteTodo(todo.id, li);
+                });
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(deleteButton);
+                todoList.appendChild(li);
+            }
+
+            // Toggle todo complete status
+            function toggleTodoComplete(id, completed) {
+                fetch(`/api/todos/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completed }),
+                })
+                .catch(error => console.error('Error updating todo:', error));
+            }
+
+            // Delete a todo
+            function deleteTodo(id, element) {
+                fetch(`/api/todos/${id}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        element.remove();
+                    }
+                })
+                .catch(error => console.error('Error deleting todo:', error));
+            }
+        });
+    </script>
+</body>
+</html>

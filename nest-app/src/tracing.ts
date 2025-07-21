@@ -1,10 +1,11 @@
-const { NodeSDK } = require("@opentelemetry/sdk-node");
-const {
-  OTLPTraceExporter,
-} = require("@opentelemetry/exporter-trace-otlp-grpc");
-const {
-  getNodeAutoInstrumentations,
-} = require("@opentelemetry/auto-instrumentations-node");
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { Resource } from '@opentelemetry/resources';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 
 // This file sets up zero-code instrumentation using environment variables
 // The following environment variables are supported:
@@ -17,19 +18,29 @@ const {
 // Create and configure the OpenTelemetry SDK
 // All configuration comes from environment variables
 const sdk = new NodeSDK({
-  traceExporter: new OTLPTraceExporter(),
+  resource: new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'nest-app',
+    [SemanticResourceAttributes.SERVICE_VERSION]: process.env.SERVICE_VERSION || '1.0.0',
+    [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.DEPLOYMENT_ENVIRONMENT || 'development',
+  }),
+  traceExporter: new OTLPTraceExporter({
+    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4317',
+  }),
   instrumentations: [
     getNodeAutoInstrumentations({
-      "@opentelemetry/instrumentation-fs": {
+      '@opentelemetry/instrumentation-fs': {
         enabled: false,
       },
-      "@opentelemetry/instrumentation-http": {
+      '@opentelemetry/instrumentation-http': {
         enabled: true,
       },
-      "@opentelemetry/instrumentation-express": {
+      '@opentelemetry/instrumentation-express': {
         enabled: true,
       },
-      "@opentelemetry/instrumentation-pg": {
+      '@opentelemetry/instrumentation-pg': {
+        enabled: true,
+      },
+      '@opentelemetry/instrumentation-nestjs-core': {
         enabled: true,
       },
     }),
@@ -37,7 +48,6 @@ const sdk = new NodeSDK({
 });
 
 // Start the SDK
-// Wrap the start method with a promise if it doesn't return one
 const startSdk = () => {
   return Promise.resolve(sdk.start());
 };
