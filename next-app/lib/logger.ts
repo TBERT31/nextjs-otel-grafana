@@ -101,5 +101,4 @@ class Logger {
   }
 }
 
-// Export d'une instance singleton
 export const logger = new Logger();

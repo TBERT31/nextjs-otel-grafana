@@ -1,4 +1,3 @@
-// app/api/health/route.ts - Health check endpoint
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/database';
 import { logger } from '@/lib/logger';
