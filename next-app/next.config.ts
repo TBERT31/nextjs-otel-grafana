@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverRuntimeConfig: {
+    port: process.env.PORT || 8082,
+  },
   experimental: {
     instrumentationHook: true,
     serverComponentsExternalPackages: ['@opentelemetry/api']

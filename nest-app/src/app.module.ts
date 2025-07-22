@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { TodosModule } from './todos/todos.module';
 import { CustomLoggerService } from './shared/logger/logger.service';
 import { SharedModule } from './shared/shared.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { SharedModule } from './shared/shared.module';
       isGlobal: true,
     }),
     SharedModule,
-    TodosModule],
+    TodosModule,
+    MetricsModule],
   controllers: [AppController],
   providers: [CustomLoggerService, AppService],
 })

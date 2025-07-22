@@ -6,6 +6,31 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import { Registry, collectDefaultMetrics, Counter } from 'prom-client';
+
+declare global {
+  var metrics: {
+    registry: Registry;
+    userSignups: Counter;
+  } | undefined;
+}
+
+const prometheusRegistry = new Registry();
+collectDefaultMetrics({
+  register: prometheusRegistry
+});
+
+const userSignups = new Counter({
+  name: 'user_signups_total',
+  help: 'Total number of user signups',
+  labelNames: ['plan_type', 'referral_source'],
+  registers: [prometheusRegistry]
+});
+
+globalThis.metrics = {
+  registry: prometheusRegistry,
+  userSignups
+};
 
 // This file sets up zero-code instrumentation using environment variables
 // The following environment variables are supported:
