@@ -1,4 +1,4 @@
-# OpenTelemetry with Grafana Tempo and Node.js
+# OpenTelemetry with Grafana Tempo, Loki, Promteheus and Node.js
 
 This project demonstrates distributed tracing using OpenTelemetry, Grafana Tempo, and Grafana.
 
@@ -8,8 +8,9 @@ This project demonstrates distributed tracing using OpenTelemetry, Grafana Tempo
 2. **Grafana Tempo**: Distributed tracing backend
 3. **Grafana Loki**: Log aggregation system
 4. **OpenTelemetry Collector**: Telemetry collection and processing pipeline
-5. **Node.js Application**: Todo application with PostgreSQL backend and OpenTelemetry auto-instrumentation
-6. **PostgreSQL**: Database to store todo items
+5. **Prometheus**: Time-series database and monitoring system used to collect, store, and query metrics from the OpenTelemetry Collector and other services.
+6. **Node.js Application**: Todo application with PostgreSQL backend and OpenTelemetry auto-instrumentation
+7. **PostgreSQL**: Database to store todo items
 
 ## Architecture
 
@@ -40,17 +41,20 @@ docker compose up -d
 ```
 
 ```bash
-cd app 
+cd app
+npm install 
 npm run dev
 ```
 
 ```bash
 cd nest-app 
+npm install
 npm run dev
 ```
 
 ```bash
 cd next-app 
+npm install
 npm run dev
 ```
 
@@ -121,6 +125,10 @@ For trace analysis, you can view traces in Grafana:
 - `docker compose.yml`: Main configuration file for all services
 - `app/`: Contains Node.js application with OpenTelemetry instrumentation
   - `app/logs/`: Contains application logs
+- `next-app/`: Contains Next.js application with OpenTelemetry instrumentation
+  - `next-app/logs/`: Contains Next application logs
+- `nest-app/`: Contains Next.js application with OpenTelemetry instrumentation
+  - `nest-app/logs/`: Contains Nest application logs
 - `tempo/`: Contains Tempo configuration
 - `grafana/`: Contains Grafana provisioning files
 - `otel-collector/`: Contains OpenTelemetry Collector configuration
@@ -175,6 +183,6 @@ This powerful correlation makes debugging much easier by connecting what happene
 ## Notes
 
 - Tempo is configured to store traces locally with a retention period of 1 hour
-- The Node.js application uses OpenTelemetry to send traces to the collector
+- The Node.js applications use OpenTelemetry to send traces to the collector
 - The collector forwards traces to Tempo
 - Grafana is configured with anonymous access for easy exploration
