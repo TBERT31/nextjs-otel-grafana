@@ -55,7 +55,7 @@ npm run dev
 ```
 
 3. Access the services:
-   - Grafana: http://localhost:3000
+   - Grafana: http://localhost:3001
    - Node.js Application (Todo App): http://localhost:8080
    - NestJS Application (Todo App): http://localhost:8081
    - Next.js Application (Todo App): http://localhost:8082
@@ -110,7 +110,7 @@ This approach shows how to get tracing with minimal code changes, making it idea
 
 For trace analysis, you can view traces in Grafana:
 
-1. Go to Grafana at http://localhost:3000
+1. Go to Grafana at http://localhost:3001
 2. Navigate to Explore
 3. Select Tempo as the data source
 4. Use TraceQL to query traces
@@ -163,7 +163,7 @@ This project uses Grafana Loki for log aggregation and connects logs to traces f
 
 ### Viewing Correlated Logs and Traces
 
-1. Go to Grafana at http://localhost:3000
+1. Go to Grafana at http://localhost:3001
 2. Navigate to Explore
 3. Select Loki as the data source
 4. Query logs with: `{container="node-app"}`

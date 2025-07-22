@@ -6,7 +6,7 @@ scrape_configs:
     # Static list of target endpoints to scrape
     static_configs:
       # Using host.docker.internal to access host machine from Docker container
-      # Port 3000 is the default Next.js port
+      # Port 8082 is the default Next.js port
       - targets: ['host.docker.internal:8082']
     # Path where metrics endpoint is exposed in the Next.js app
     metrics_path: '/api/metrics'
@@ -16,7 +16,7 @@ scrape_configs:
     # Static list of target endpoints to scrape
     static_configs:
       # Using host.docker.internal to access host machine from Docker container
-      # Port 3000 is the default Next.js port
+      # Port 8081 is the default NestJS port
       - targets: ['host.docker.internal:8081']
     # Path where metrics endpoint is exposed in the Next.js app
     metrics_path: '/api/metrics'
