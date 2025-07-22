@@ -430,7 +430,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "nodejs_version_info",
+          "expr": "sum(nodejs_version_info{instance=~\"$instance\"}) by (version)",
           "format": "time_series",
           "instant": false,
           "interval": "",
