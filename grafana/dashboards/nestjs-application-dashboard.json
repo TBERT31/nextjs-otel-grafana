@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "node.js prometheus client basic metrics",
+  "description": "NestJS prometheus client basic metrics with additional Logs and Traces",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -1114,7 +1114,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "NestJS Application Dashboard",
+  "title": "NestJS (backend) Application Dashboard",
   "uid": "QTSqcpJWkv9",
-  "version": 11
+  "version": 13
 }

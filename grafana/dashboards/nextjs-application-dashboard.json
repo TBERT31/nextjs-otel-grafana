@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "node.js prometheus client basic metrics",
+  "description": "Next.js prometheus client basic metrics with additional logs and traces",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -1113,7 +1113,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Next.js Application Dashboard",
+  "title": "Next.js (frontend) Application Dashboard",
   "uid": "PTSqcpJWk",
-  "version": 13
+  "version": 1
 }
