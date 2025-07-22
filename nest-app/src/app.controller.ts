@@ -25,25 +25,26 @@ export class AppController {
       const dbHealthy = await this.appService.testDatabaseConnection();
 
       const healthStatus = {
-        status: dbHealthy ? 'ok' : 'degraded',
-        timestamp: new Date().toISOString(),
-        service: process.env.OTEL_SERVICE_NAME || 'nest-app',
+        name: process.env.OTEL_SERVICE_NAME || 'nest-app',
         version: process.env.OTEL_SERVICE_VERSION || '1.0.0',
+        currentDate: new Date().toISOString(),
+        aliveSince: process.uptime(),
+        status: dbHealthy ? 'ok' : 'degraded',
         environment: process.env.NODE_ENV || 'development',
         database: dbHealthy ? 'connected' : 'disconnected',
-        aliveSince: process.uptime(),
+        
       };
 
       const statusCode = dbHealthy ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
 
       this.logger.info('GET /health - Health check completed', {
-        status: healthStatus.status,
-        timestamp: healthStatus.timestamp,
-        service: healthStatus.service,
+        name: healthStatus.name,
         version: healthStatus.version,
-        environment: healthStatus.environment,
-        database: healthStatus.database,
+        currentDate: healthStatus.currentDate,
         aliveSince: healthStatus.aliveSince,
+        status: healthStatus.status,
+        environment: healthStatus.environment,
+        database: healthStatus.database,  
       });
 
       return res.status(statusCode).json(healthStatus);

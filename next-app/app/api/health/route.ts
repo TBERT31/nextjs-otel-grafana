@@ -10,25 +10,25 @@ export async function GET() {
     const dbHealthy = await db.testConnection();
 
     const healthStatus = {
-      status: dbHealthy ? 'ok' : 'degraded',
-      timestamp: new Date().toISOString(),
-      service: process.env.OTEL_SERVICE_NAME || 'next-app',
+      name: process.env.OTEL_SERVICE_NAME || 'next-app',
       version: process.env.OTEL_SERVICE_VERSION || '1.0.0',
+      currentDate	: new Date().toISOString(),
+      aliveSince : process.uptime(),
+      status: dbHealthy ? 'ok' : 'degraded',
       environment: process.env.NODE_ENV || 'development',
       database: dbHealthy ? 'connected' : 'disconnected',
-      aliveSince : process.uptime(),
     };
 
     const statusCode = dbHealthy ? 200 : 503;
 
     logger.info('GET /api/health - Health check completed', { 
-      status: healthStatus.status,
-      timestamp: healthStatus.timestamp,
-      service: healthStatus.service,
+      name: healthStatus.name,
       version: healthStatus.version,
+      currentDate	: healthStatus.currentDate,
+      aliveSince: healthStatus.aliveSince,
+      status: healthStatus.status,
       environment: healthStatus.environment,
       database: healthStatus.database,
-      aliveSince: healthStatus.aliveSince,
     });
 
     return NextResponse.json(healthStatus, { 
