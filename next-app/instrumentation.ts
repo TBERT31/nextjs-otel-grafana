@@ -1,3 +1,12 @@
+import { Registry, collectDefaultMetrics, Counter } from 'prom-client';
+
+declare global {
+  var metrics: {
+    registry: Registry;
+    userSignups: Counter;
+  } | undefined;
+}
+
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     const { NodeSDK } = require('@opentelemetry/sdk-node')
@@ -14,6 +23,23 @@ export async function register() {
     console.log(`Version: ${serviceVersion}`)
     console.log(`Endpoint: ${otlpEndpoint}`)
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
+
+    const prometheusRegistry = new Registry();
+    collectDefaultMetrics({
+      register: prometheusRegistry
+    });
+
+    const userSignups = new Counter({
+      name: 'user_signups_total',
+      help: 'Total number of user signups',
+      labelNames: ['plan_type', 'referral_source'],
+      registers: [prometheusRegistry]
+    });
+
+    globalThis.metrics = {
+      registry: prometheusRegistry,
+      userSignups
+    };
 
     const sdk = new NodeSDK({
       serviceName,

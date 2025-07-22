@@ -1,0 +1,22 @@
+# Configuration for scraping metrics from different targets
+scrape_configs:
+
+  # Job for collecting metrics from Next.js application
+  - job_name: 'next-app'
+    # Static list of target endpoints to scrape
+    static_configs:
+      # Using host.docker.internal to access host machine from Docker container
+      # Port 3000 is the default Next.js port
+      - targets: ['host.docker.internal:3001']
+    # Path where metrics endpoint is exposed in the Next.js app
+    metrics_path: '/api/metrics'
+
+  # Job for collecting metrics from Next.js application
+  - job_name: 'nest-app'
+    # Static list of target endpoints to scrape
+    static_configs:
+      # Using host.docker.internal to access host machine from Docker container
+      # Port 3000 is the default Next.js port
+      - targets: ['host.docker.internal:8081']
+    # Path where metrics endpoint is exposed in the Next.js app
+    metrics_path: '/api/metrics'

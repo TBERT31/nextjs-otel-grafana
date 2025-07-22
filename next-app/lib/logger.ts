@@ -70,6 +70,20 @@ class Logger {
       console.log(logString);
     }
 
+    // Créer le répertoire de logs si nécessaire
+    if (this.logFile) {
+      const logDir = path.dirname(this.logFile);
+      if (!fs.existsSync(logDir)) {
+        try {
+          fs.mkdirSync(logDir, { recursive: true });
+          console.log(`Created log directory: ${logDir}`);
+        } catch (error) {
+          console.error(`Failed to create log directory: ${logDir}`, error);
+          this.logFile = undefined; // Désactiver les logs fichier si échec
+        }
+      }
+    }
+
     // Log vers le fichier si configuré
     if (this.logFile) {
       try {

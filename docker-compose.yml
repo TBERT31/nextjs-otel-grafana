@@ -13,6 +13,7 @@ services:
       - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - tempo
       - loki
@@ -58,6 +59,19 @@ services:
     networks:
       - app-network
 
+  # Prometheus for metrics collection
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090" 
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - app-network
+
   # OpenTelemetry Collector
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
@@ -74,6 +88,7 @@ services:
     depends_on:
       - tempo
       - loki
+      - prometheus
     networks:
       - app-network
 
