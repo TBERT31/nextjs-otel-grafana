@@ -6,17 +6,19 @@ services:
     image: grafana/grafana:12.0.2
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
     volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - tempo
       - loki
+      - prometheus
+      - otel-collector
     networks:
       - app-network
 
@@ -28,7 +30,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./loki:/etc/loki
+      - ./infra/loki:/etc/loki
     networks:
       - app-network
 
@@ -38,7 +40,7 @@ services:
     container_name: promtail
     command: -config.file=/etc/promtail/config.yaml
     volumes:
-      - ./promtail:/etc/promtail
+      - ./infra/promtail:/etc/promtail
       - ./nest-app/logs:/nest-app/logs
       - ./next-app/logs:/next-app/logs
       - ./app/logs:/app/logs
@@ -53,7 +55,7 @@ services:
     container_name: tempo
     command: ["-config.file=/etc/tempo/tempo-config.yaml"]
     volumes:
-      - ./tempo/tempo-config.yaml:/etc/tempo/tempo-config.yaml
+      - ./infra/tempo/tempo-config.yaml:/etc/tempo/tempo-config.yaml
     ports:
       - "3200:3200"  # tempo
     networks:
@@ -66,7 +68,7 @@ services:
     ports:
       - "9090:9090" 
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -78,7 +80,7 @@ services:
     container_name: otel-collector
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
-      - ./otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./infra/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
       - "4317:4317"  # OTLP gRPC
       - "4318:4318"  # OTLP HTTP
@@ -104,7 +106,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./postgres/init:/docker-entrypoint-initdb.d
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d
     networks:
       - app-network
     healthcheck:
