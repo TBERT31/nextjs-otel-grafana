@@ -1,4 +1,3 @@
-// src/todos/todos.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../config/database.config';
 import { CustomLoggerService } from '../shared/logger/logger.service';
